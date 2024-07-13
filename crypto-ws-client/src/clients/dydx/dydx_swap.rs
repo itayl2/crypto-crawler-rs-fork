@@ -55,10 +55,12 @@ struct DydxCommandTranslator {}
 impl MessageHandler for DydxMessageHandler {
     fn handle_message(&mut self, msg: &str) -> MiscMessage {
         let obj = serde_json::from_str::<HashMap<String, Value>>(msg).unwrap();
+        // println!("Received {} from {}", msg, EXCHANGE_NAME);
 
         match obj.get("type").unwrap().as_str().unwrap() {
             "error" => {
                 error!("Received {} from {}", msg, EXCHANGE_NAME);
+                // eprintln!("Received {} from {}", msg, EXCHANGE_NAME);
                 if obj.contains_key("message")
                     && obj
                         .get("message")
@@ -74,11 +76,14 @@ impl MessageHandler for DydxMessageHandler {
             }
             "connected" | "pong" => {
                 debug!("Received {} from {}", msg, EXCHANGE_NAME);
-                MiscMessage::Other
+                // println!("Received {} from {}", msg, EXCHANGE_NAME);
+                MiscMessage::Normal // so that we would get the pong message and use it as heartbeat
+                // MiscMessage::Other
             }
             "channel_data" | "subscribed" => MiscMessage::Normal,
             _ => {
                 warn!("Received {} from {}", msg, EXCHANGE_NAME);
+                // eprintln!("Received {} from {}", msg, EXCHANGE_NAME);
                 MiscMessage::Other
             }
         }
