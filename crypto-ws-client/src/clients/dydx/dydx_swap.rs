@@ -27,6 +27,9 @@ const WEBSOCKET_URL: &str = "wss://api.dydx.exchange/v3/ws";
 pub struct DydxSwapWSClient {
     client: WSClientInternal<DydxMessageHandler>,
     translator: DydxCommandTranslator,
+    subaccount: bool,
+    wallet_address: Option<String>,
+    subaccount_number: Option<String>,
 }
 
 impl_new_constructor!(
@@ -36,6 +39,30 @@ impl_new_constructor!(
     DydxMessageHandler {},
     DydxCommandTranslator {}
 );
+
+impl DydxSwapWSClient {
+    /// Creates a websocket client.
+    ///
+    /// # Arguments
+    ///
+    /// * `tx` - The sending part of a channel
+    /// * `url` - Optional server url, usually you don't need specify it
+    pub async fn new(tx: std::sync::mpsc::Sender<String>, url: Option<&str>, subaccount: bool, wallet_address: Option<String>, subaccount_number: Option<String>) -> Self {
+        let real_url = match url {
+            Some(endpoint) => endpoint,
+            None => WEBSOCKET_URL,
+        };
+        DydxSwapWSClient {
+            client: WSClientInternal::connect(EXCHANGE_NAME, real_url, DydxMessageHandler {
+                subaccount,
+                wallet_address,
+                subaccount_number,
+            }, None, tx)
+                .await,
+            translator: DydxCommandTranslator {},
+        }
+    }
+}
 
 impl_trait!(Trade, DydxSwapWSClient, subscribe_trade, "v3_trades");
 #[rustfmt::skip]
@@ -49,7 +76,11 @@ panic_candlestick!(DydxSwapWSClient);
 
 impl_ws_client_trait!(DydxSwapWSClient);
 
-struct DydxMessageHandler {}
+struct DydxMessageHandler {
+    subaccount: bool,
+    wallet_address: Option<String>,
+    subaccount_number: Option<String>,
+}
 struct DydxCommandTranslator {}
 
 impl MessageHandler for DydxMessageHandler {
@@ -74,11 +105,26 @@ impl MessageHandler for DydxMessageHandler {
                     MiscMessage::Other
                 }
             }
-            "connected" | "pong" => {
+            "pong" => {
                 debug!("Received {} from {}", msg, EXCHANGE_NAME);
                 // println!("Received {} from {}", msg, EXCHANGE_NAME);
                 MiscMessage::Normal // so that we would get the pong message and use it as heartbeat
                 // MiscMessage::Other
+            }
+            "connected" => {
+                debug!("Received connected: {} from {}", msg, EXCHANGE_NAME);
+                // println!("Received {} from {}", msg, EXCHANGE_NAME);
+                let return_type = if self.subaccount && self.wallet_address.is_some() && self.subaccount_number.is_some() {
+                    let msg = format!(
+                        r#"{{"type": "subscribe", "channel": "v4_subaccounts", "id": "{}/{}"}}"#,
+                        self.wallet_address.as_ref().unwrap(),
+                        self.subaccount_number.as_ref().unwrap()
+                    );
+                    MiscMessage::WebSocket(Message::Text(msg))
+                } else {
+                    MiscMessage::Normal // so that we would get the pong message and use it as heartbeat
+                };
+                return_type
             }
             "channel_data" | "subscribed" => MiscMessage::Normal,
             _ => {
