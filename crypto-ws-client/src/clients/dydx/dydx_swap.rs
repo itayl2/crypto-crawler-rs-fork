@@ -86,6 +86,11 @@ impl MessageHandler for DydxMessageHandler {
         // println!("Received {} from {}", msg, EXCHANGE_NAME);
 
         match obj.get("type").unwrap().as_str().unwrap() {
+            "ping" => {
+                debug!("Received {} from {}", msg, EXCHANGE_NAME);
+                println!("Received {} from {}", msg, EXCHANGE_NAME);
+                MiscMessage::WebSocket(Message::Text(r#"{{"type":"pong"}}"#.to_string()))
+            }
             "error" => {
                 error!("Received {} from {}", msg, EXCHANGE_NAME);
                 // eprintln!("Received {} from {}", msg, EXCHANGE_NAME);
