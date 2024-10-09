@@ -27,18 +27,15 @@ const WEBSOCKET_URL: &str = "wss://api.dydx.exchange/v3/ws";
 pub struct DydxSwapWSClient {
     client: WSClientInternal<DydxMessageHandler>,
     translator: DydxCommandTranslator,
-    subaccount: bool,
-    wallet_address: Option<String>,
-    subaccount_number: Option<String>,
 }
 
-impl_new_constructor!(
-    DydxSwapWSClient,
-    EXCHANGE_NAME,
-    WEBSOCKET_URL,
-    DydxMessageHandler {},
-    DydxCommandTranslator {}
-);
+// impl_new_constructor!(
+//     DydxSwapWSClient,
+//     EXCHANGE_NAME,
+//     WEBSOCKET_URL,
+//     DydxMessageHandler {},
+//     DydxCommandTranslator {}
+// );
 
 impl DydxSwapWSClient {
     /// Creates a websocket client.
