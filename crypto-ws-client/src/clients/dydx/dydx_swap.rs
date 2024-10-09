@@ -131,6 +131,7 @@ impl MessageHandler for DydxMessageHandler {
             "channel_data" | "subscribed" => MiscMessage::Normal,
             _ => {
                 warn!("Received {} from {}", msg, EXCHANGE_NAME);
+                eprintln!("Received unexpected message from {}: {}", EXCHANGE_NAME, msg);
                 // eprintln!("Received {} from {}", msg, EXCHANGE_NAME);
                 MiscMessage::Other
             }
