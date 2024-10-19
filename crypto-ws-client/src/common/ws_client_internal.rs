@@ -12,7 +12,7 @@ use flate2::read::{DeflateDecoder, GzDecoder};
 use log::*;
 use reqwest::StatusCode;
 use tokio_tungstenite::tungstenite::{Error, Message};
-
+use tokio_tungstenite::tungstenite::protocol::frame::Frame;
 use crate::common::message_handler::{MessageHandler, MiscMessage};
 
 // `WSClientInternal` should be Sync + Send so that it can be put into Arc
@@ -155,10 +155,14 @@ impl<H: MessageHandler> WSClientInternal<H> {
                         std::str::from_utf8(&resp).unwrap(),
                         self.url,
                     );
-                    if self.exchange == "binance" || self.exchange == "dydx" {
+                    if self.exchange == "binance" {
                         // send a pong frame
                         println!("Sending a pong frame to {}", self.url);
                         _ = self.command_tx.send(Message::Pong(Vec::new())).await;
+                    }
+                    if self.exchange == "dydx" {
+                        let frame = Frame::pong(resp);
+                        _ = self.command_tx.send(Message::Frame(frame)).await;
                     }
                     match self.exchange == "dydx" {
                         true => Some(r#"{"type":"ping"}"#.to_string()),
