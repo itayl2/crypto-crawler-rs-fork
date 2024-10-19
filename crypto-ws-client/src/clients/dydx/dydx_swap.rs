@@ -88,12 +88,12 @@ impl MessageHandler for DydxMessageHandler {
         match obj.get("type").unwrap().as_str().unwrap() {
             "ping" => {
                 debug!("Received {} from {}", msg, EXCHANGE_NAME);
-                println!("Received ping msg: {msg}");
+                println!("crypto-crawler-rs-fork Received ping msg: {msg}");
                 MiscMessage::WebSocket(Message::Text(r#"{{"type":"pong"}}"#.to_string()))
             }
             "error" => {
                 error!("Received {} from {}", msg, EXCHANGE_NAME);
-                eprintln!("Received error msg: {msg}");
+                eprintln!("crypto-crawler-rs-fork Received error msg: {msg}");
                 // eprintln!("Received {} from {}", msg, EXCHANGE_NAME);
                 if obj.contains_key("message")
                     && obj
@@ -110,14 +110,14 @@ impl MessageHandler for DydxMessageHandler {
             }
             "pong" => {
                 debug!("Received {} from {}", msg, EXCHANGE_NAME);
-                println!("Received pong msg: {msg}");
+                println!("crypto-crawler-rs-fork Received pong msg: {msg}");
                 // println!("Received {} from {}", msg, EXCHANGE_NAME);
                 MiscMessage::Normal // so that we would get the pong message and use it as heartbeat
                 // MiscMessage::Other
             }
             "connected" => {
                 debug!("Received connected: {} from {}", msg, EXCHANGE_NAME);
-                println!("Received connected msg: {msg}");
+                println!("crypto-crawler-rs-fork Received connected msg: {msg}");
                 // println!("Received {} from {}", msg, EXCHANGE_NAME);
                 let return_type = if self.subaccount && self.wallet_address.is_some() && self.subaccount_number.is_some() {
                     let msg = format!(
@@ -134,7 +134,7 @@ impl MessageHandler for DydxMessageHandler {
             "channel_data" | "subscribed" => MiscMessage::Normal,
             _ => {
                 warn!("Received {} from {}", msg, EXCHANGE_NAME);
-                eprintln!("Received unexpected message from {}: {}", EXCHANGE_NAME, msg);
+                eprintln!("crypto-crawler-rs-fork Received unexpected message from {}: {}", EXCHANGE_NAME, msg);
                 // eprintln!("Received {} from {}", msg, EXCHANGE_NAME);
                 MiscMessage::Other
             }
