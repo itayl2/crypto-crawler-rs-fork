@@ -161,8 +161,8 @@ impl<H: MessageHandler> WSClientInternal<H> {
                         _ = self.command_tx.send(Message::Pong(Vec::new())).await;
                     }
                     if self.exchange == "dydx" {
-                        let frame = Frame::pong(resp);
-                        _ = self.command_tx.send(Message::Frame(frame)).await;
+                        // let frame = Frame::pong(resp);
+                        // _ = self.command_tx.send(Message::Frame(frame)).await;
                     }
                     match self.exchange == "dydx" {
                         true => Some(r#"{"type":"ping"}"#.to_string()),
