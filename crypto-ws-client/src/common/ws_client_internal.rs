@@ -160,10 +160,10 @@ impl<H: MessageHandler> WSClientInternal<H> {
                         println!("Sending a pong frame to {}", self.url);
                         _ = self.command_tx.send(Message::Pong(Vec::new())).await;
                     }
-                    if self.exchange == "dydx" {
-                        Some(r#"{"type":"ping"}"#.to_string());
+                    match self.exchange == "dydx" {
+                        true => Some(r#"{"type":"ping"}"#.to_string()),
+                        false => None,
                     }
-                    None
                 }
                 Message::Pong(resp) => {
                     num_unanswered_ping.store(0, Ordering::Release);
