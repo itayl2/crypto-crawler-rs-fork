@@ -155,10 +155,13 @@ impl<H: MessageHandler> WSClientInternal<H> {
                         std::str::from_utf8(&resp).unwrap(),
                         self.url,
                     );
-                    if self.exchange == "binance" {
+                    if self.exchange == "binance" || self.exchange == "dydx" {
                         // send a pong frame
-                        debug!("Sending a pong frame to {}", self.url);
+                        println!("Sending a pong frame to {}", self.url);
                         _ = self.command_tx.send(Message::Pong(Vec::new())).await;
+                    }
+                    if self.exchange == "dydx" {
+                        Some(r#"{"type":"ping"}"#.to_string());
                     }
                     None
                 }
