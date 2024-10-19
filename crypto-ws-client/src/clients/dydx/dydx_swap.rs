@@ -89,7 +89,8 @@ impl MessageHandler for DydxMessageHandler {
             "ping" => {
                 debug!("Received {} from {}", msg, EXCHANGE_NAME);
                 println!("crypto-crawler-rs-fork Received ping msg: {msg}");
-                MiscMessage::WebSocket(Message::Text(r#"{{"type":"pong"}}"#.to_string()))
+                // MiscMessage::WebSocket(Message::Text(r#"{{"type":"pong"}}"#.to_string()))
+                MiscMessage::Normal
             }
             "error" => {
                 error!("Received {} from {}", msg, EXCHANGE_NAME);
