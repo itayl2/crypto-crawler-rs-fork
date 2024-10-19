@@ -193,6 +193,7 @@ impl<H: MessageHandler> WSClientInternal<H> {
 
             if let Some(txt) = txt {
                 let txt = txt.as_str().trim().to_string();
+                println!("crypto-crawler-rs-fork Received message from {}: {}", self.url, txt);
                 match handler.handle_message(&txt) {
                     MiscMessage::Normal => {
                         // the receiver might get dropped earlier than this loop
