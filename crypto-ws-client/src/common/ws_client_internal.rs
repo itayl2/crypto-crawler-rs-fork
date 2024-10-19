@@ -106,7 +106,7 @@ impl<H: MessageHandler> WSClientInternal<H> {
                 };
                 loop {
                     let now = timer.tick().await;
-                    println!("{:?} sending ping {}", now, msg.to_text().unwrap());
+                    // println!("{:?} sending ping {}", now, msg.to_text().unwrap());
                     debug!("{:?} sending ping {}", now, msg.to_text().unwrap());
                     if let Err(err) = command_tx_clone.send(msg.clone()).await {
                         eprintln!("Error sending ping {}", err);
