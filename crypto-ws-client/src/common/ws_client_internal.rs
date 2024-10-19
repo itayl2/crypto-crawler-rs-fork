@@ -150,8 +150,8 @@ impl<H: MessageHandler> WSClientInternal<H> {
                 }
                 Message::Ping(resp) => {
                     // binance server will send a ping frame every 3 or 5 minutes
-                    debug!(
-                        "Received a ping frame: {} from {}",
+                    println!(
+                        "crypto-crawler-rs-fork Received a ping frame: {} from {}",
                         std::str::from_utf8(&resp).unwrap(),
                         self.url,
                     );
@@ -164,8 +164,8 @@ impl<H: MessageHandler> WSClientInternal<H> {
                 }
                 Message::Pong(resp) => {
                     num_unanswered_ping.store(0, Ordering::Release);
-                    debug!(
-                        "Received a pong frame: {} from {}, reset num_unanswered_ping to {}",
+                    println!(
+                        "crypto-crawler-rs-fork Received a pong frame: {} from {}, reset num_unanswered_ping to {}",
                         std::str::from_utf8(&resp).unwrap(),
                         self.exchange,
                         num_unanswered_ping.load(Ordering::Acquire)
@@ -176,15 +176,15 @@ impl<H: MessageHandler> WSClientInternal<H> {
                 Message::Close(resp) => {
                     match resp {
                         Some(frame) => {
-                            warn!(
-                                "Received a CloseFrame: code: {}, reason: {} from {}",
+                            eprintln!(
+                                "crypto-crawler-rs-fork Received a CloseFrame: code: {}, reason: {} from {}",
                                 frame.code, frame.reason, self.url
                             );
                         }
-                        None => warn!("Received a close message without CloseFrame"),
+                        None => eprintln!("crypto-crawler-rs-fork Received a close message without CloseFrame"),
                     }
                     // break;
-                    panic!("Received a CloseFrame"); //fail fast so that pm2 can restart the process
+                    panic!("crypto-crawler-rs-fork Received a CloseFrame"); //fail fast so that pm2 can restart the process
                 }
             };
 
@@ -201,8 +201,8 @@ impl<H: MessageHandler> WSClientInternal<H> {
                     MiscMessage::WebSocket(ws_msg) => _ = self.command_tx.send(ws_msg).await,
                     MiscMessage::Pong => {
                         num_unanswered_ping.store(0, Ordering::Release);
-                        debug!(
-                            "Received {} from {}, reset num_unanswered_ping to {}",
+                        println!(
+                            "crypto-crawler-rs-fork Received {} from {}, reset num_unanswered_ping to {}",
                             txt,
                             self.exchange,
                             num_unanswered_ping.load(Ordering::Acquire)
