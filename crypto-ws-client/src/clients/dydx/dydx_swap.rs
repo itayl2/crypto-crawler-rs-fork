@@ -146,7 +146,11 @@ impl MessageHandler for DydxMessageHandler {
         // https://docs.dydx.exchange/#v3-websocket-api
         // The server will send pings every 30s and expects a pong within 10s.
         // The server does not expect pings, but will respond with a pong if sent one.
-        Some((Message::Text(r#"{"type":"ping"}"#.to_string()), 30))
+        // Some((Message::Text(r#"{"type":"ping"}"#.to_string()), 30))
+
+        // https://docs.dydx.exchange/api_integration-indexer/indexer_websocket
+        // dydx v4 does not expect pings and does not respond to them
+        None
     }
 }
 
