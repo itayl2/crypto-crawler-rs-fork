@@ -49,13 +49,15 @@ impl DydxSwapWSClient {
             Some(endpoint) => endpoint,
             None => WEBSOCKET_URL,
         };
+        let internal_client = WSClientInternal::connect(EXCHANGE_NAME, real_url, DydxMessageHandler {
+            subaccount,
+            wallet_address,
+            subaccount_number,
+        }, None, tx)
+            .await;
+        println!("crypto-crawler-rs-fork DydxSwapWSClient created");
         DydxSwapWSClient {
-            client: WSClientInternal::connect(EXCHANGE_NAME, real_url, DydxMessageHandler {
-                subaccount,
-                wallet_address,
-                subaccount_number,
-            }, None, tx)
-                .await,
+            client: internal_client,
             translator: DydxCommandTranslator {},
         }
     }
